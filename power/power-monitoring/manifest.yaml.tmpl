@@ -1,0 +1,11 @@
+version: v1alpha1
+metadata:
+  name: power-monitoring
+  version: "{{ .VERSION }}"
+  author: Sidero Labs
+  description: |
+    [{{ .TIER }}] This system extension provides CPU power monitoring capabilities for Intel and AMD processors.
+    Includes Intel RAPL (Running Average Power Limit) and AMD Energy monitoring kernel modules.
+  compatibility:
+    talos:
+      version: ">= v1.0.0"

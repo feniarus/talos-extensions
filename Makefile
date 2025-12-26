@@ -112,6 +112,7 @@ TARGETS += nvidia-open-gpu-kernel-modules-production
 TARGETS += nvme-cli
 TARGETS += soci-snapshotter
 TARGETS += panfrost
+TARGETS += power-monitoring
 TARGETS += qemu-guest-agent
 TARGETS += qlogic-firmware
 TARGETS += realtek-firmware

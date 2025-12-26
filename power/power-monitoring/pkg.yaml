@@ -1,0 +1,61 @@
+name: power-monitoring
+variant: scratch
+shell: /bin/bash
+dependencies:
+  - stage: base
+  # The pkgs version for a particular release of Talos as defined in
+  # https://github.com/siderolabs/talos/blob/<talos version>/pkg/machinery/gendata/data/pkgs
+  - image: "{{ .BUILD_ARG_PKGS_PREFIX }}/power-monitoring-pkg:{{ .BUILD_ARG_PKGS }}"
+steps:
+  - install:
+      - |
+        mkdir -p /rootfs/usr/lib/modules
+
+        # Copy power monitoring kernel modules
+        cp -R /usr/lib/modules/* /rootfs/usr/lib/modules
+      - |
+        # Create modprobe configuration to auto-load modules
+        mkdir -p /rootfs/usr/local/etc/modprobe.d
+        
+        cat > /rootfs/usr/local/etc/modprobe.d/power-monitoring.conf << 'EOF'
+# Intel RAPL (Running Average Power Limit)
+# Provides power monitoring and capping for Intel CPUs
+install intel_rapl_common /sbin/modprobe --ignore-install intel_rapl_common && /sbin/modprobe intel_rapl_msr
+install intel_rapl_msr /sbin/modprobe --ignore-install intel_rapl_msr
+
+# AMD Energy monitoring
+# Provides energy consumption monitoring for AMD CPUs
+install amd_energy /sbin/modprobe --ignore-install amd_energy
+
+# MSR (Model Specific Register) access
+# Required for direct CPU register access
+install msr /sbin/modprobe --ignore-install msr
+
+# Power capping framework
+install rapl /sbin/modprobe --ignore-install rapl
+EOF
+      - |
+        # Create udev rules for proper permissions
+        mkdir -p /rootfs/usr/local/etc/udev/rules.d
+        
+        cat > /rootfs/usr/local/etc/udev/rules.d/99-power-monitoring.rules << 'EOF'
+# Allow read access to powercap interface
+SUBSYSTEM=="powercap", MODE="0444"
+
+# Allow read access to MSR devices
+KERNEL=="msr[0-9]*", MODE="0400"
+
+# Allow read access to hwmon devices
+SUBSYSTEM=="hwmon", MODE="0444"
+EOF
+  - test:
+      - |
+        mkdir -p /extensions-validator-rootfs
+        cp -r /rootfs/ /extensions-validator-rootfs/rootfs
+        cp /pkg/manifest.yaml /extensions-validator-rootfs/manifest.yaml
+        /extensions-validator validate --rootfs=/extensions-validator-rootfs --pkg-name="${PKG_NAME}"
+finalize:
+  - from: /rootfs
+    to: /rootfs
+  - from: /pkg/manifest.yaml
+    to: /

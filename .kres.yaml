@@ -54,6 +54,7 @@ spec:
     - nvme-cli
     - soci-snapshotter
     - panfrost
+    - power-monitoring
     - qemu-guest-agent
     - qlogic-firmware
     - realtek-firmware
