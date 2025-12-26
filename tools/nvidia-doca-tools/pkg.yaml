@@ -1,0 +1,58 @@
+name: nvidia-doca-tools
+variant: scratch
+shell: /bin/bash
+dependencies:
+  - stage: base
+steps:
+  - sources:
+      - url: https://www.mellanox.com/downloads/MFT/mft-{{ .DOCA_MFT_VERSION }}-x86_64-rpm.tgz
+        destination: mft.tgz
+        sha256: {{ .DOCA_MFT_SHA256 }}
+        sha512: {{ .DOCA_MFT_SHA512 }}
+    prepare:
+      - |
+        tar -xzf mft.tgz --strip-components=1
+        
+        # Extract RPMs
+        mkdir -p extracted
+        cd extracted
+        for rpm in ../*.rpm; do
+          rpm2cpio "$rpm" | cpio -idmv
+        done
+    install:
+      - |
+        mkdir -p /rootfs/usr/local/bin /rootfs/usr/local/lib /rootfs/usr/local/share
+
+        # Copy MFT tools
+        if [ -d extracted/usr/bin ]; then
+          cp -R extracted/usr/bin/* /rootfs/usr/local/bin/ || true
+        fi
+
+        # Copy libraries
+        if [ -d extracted/usr/lib64 ]; then
+          cp -R extracted/usr/lib64/* /rootfs/usr/local/lib/ || true
+        fi
+
+        # Copy documentation
+        if [ -d extracted/usr/share ]; then
+          cp -R extracted/usr/share/* /rootfs/usr/local/share/ || true
+        fi
+      - |
+        # Create wrapper scripts for common tools
+        cat > /rootfs/usr/local/bin/doca-fw-update << 'EOF'
+#!/bin/sh
+# Wrapper for mstflint firmware update
+exec mstflint "$@"
+EOF
+        chmod +x /rootfs/usr/local/bin/doca-fw-update
+    test:
+      - |
+        mkdir -p /extensions-validator-rootfs
+        cp -r /rootfs/ /extensions-validator-rootfs/rootfs
+        cp /pkg/manifest.yaml /extensions-validator-rootfs/manifest.yaml
+        /extensions-validator validate --rootfs=/extensions-validator-rootfs --pkg-name="${PKG_NAME}"
+finalize:
+  - from: /rootfs
+    to: /rootfs
+  - from: /pkg/manifest.yaml
+    to: /

@@ -1,0 +1,11 @@
+version: v1alpha1
+metadata:
+  name: nvidia-doca-tools
+  version: "{{ .VERSION }}"
+  author: Sidero Labs
+  description: |
+    [{{ .TIER }}] This system extension provides management and diagnostic tools for NVIDIA BlueField DPUs and ConnectX NICs.
+    Includes firmware management, performance testing, and diagnostic utilities.
+  compatibility:
+    talos:
+      version: ">= v1.0.0"

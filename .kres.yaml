@@ -46,6 +46,11 @@ spec:
     - nut-client
     - nvidia-container-toolkit-lts
     - nvidia-container-toolkit-production
+    - nvidia-doca-all
+    - nvidia-doca-networking
+    - nvidia-doca-ofed
+    - nvidia-doca-roce
+    - nvidia-doca-tools
     - nvidia-fabricmanager-lts
     - nvidia-fabricmanager-production
     - nvidia-gdrdrv-device

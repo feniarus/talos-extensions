@@ -1,0 +1,11 @@
+version: v1alpha1
+metadata:
+  name: nvidia-doca-networking
+  version: "{{ .VERSION }}"
+  author: Sidero Labs
+  description: |
+    [{{ .TIER }}] This system extension provides NVIDIA DOCA networking acceleration for BlueField DPUs and ConnectX NICs.
+    Includes MLNX_OFED drivers, DOCA Core, MLNX-DPDK, OVS-DOCA, and DOCA Flow for accelerated networking.
+  compatibility:
+    talos:
+      version: ">= v1.0.0"

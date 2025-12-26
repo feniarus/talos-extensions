@@ -1,0 +1,2 @@
+VERSION: "{{ .DOCA_VERSION }}-{{ .BUILD_ARG_TAG }}"
+TIER: "contrib"

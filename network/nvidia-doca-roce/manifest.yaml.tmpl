@@ -1,0 +1,11 @@
+version: v1alpha1
+metadata:
+  name: nvidia-doca-roce
+  version: "{{ .VERSION }}"
+  author: Sidero Labs
+  description: |
+    [{{ .TIER }}] This system extension provides lightweight RDMA over Converged Ethernet (RoCE) support for NVIDIA ConnectX NICs.
+    Minimal installation for RoCE-only workloads without full DOCA stack.
+  compatibility:
+    talos:
+      version: ">= v1.0.0"

@@ -1,0 +1,11 @@
+version: v1alpha1
+metadata:
+  name: nvidia-doca-all
+  version: "{{ .VERSION }}"
+  author: Sidero Labs
+  description: |
+    [{{ .TIER }}] This system extension provides the complete NVIDIA DOCA SDK for BlueField DPUs and ConnectX NICs.
+    Includes all DOCA libraries, drivers, tools, and development headers for advanced data center acceleration.
+  compatibility:
+    talos:
+      version: ">= v1.0.0"

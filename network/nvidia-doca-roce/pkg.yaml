@@ -1,0 +1,37 @@
+name: nvidia-doca-roce
+variant: scratch
+shell: /bin/bash
+dependencies:
+  - stage: base
+  # The pkgs version for a particular release of Talos as defined in
+  # https://github.com/siderolabs/talos/blob/<talos version>/pkg/machinery/gendata/data/pkgs
+  - image: "{{ .BUILD_ARG_PKGS_PREFIX }}/nvidia-doca-roce-pkg:{{ .BUILD_ARG_PKGS }}"
+steps:
+  - install:
+      - |
+        mkdir -p /rootfs/usr/lib/modules
+
+        cp -R /usr/lib/modules/* /rootfs/usr/lib/modules
+      - |
+        mkdir -p /rootfs/usr/local/bin /rootfs/usr/local/lib
+
+        # Copy RoCE binaries (perftest, etc.)
+        if [ -d /usr/local/bin ]; then
+          cp -R /usr/local/bin/* /rootfs/usr/local/bin/ || true
+        fi
+
+        # Copy RoCE libraries
+        if [ -d /usr/local/lib ]; then
+          cp -R /usr/local/lib/* /rootfs/usr/local/lib/ || true
+        fi
+  - test:
+      - |
+        mkdir -p /extensions-validator-rootfs
+        cp -r /rootfs/ /extensions-validator-rootfs/rootfs
+        cp /pkg/manifest.yaml /extensions-validator-rootfs/manifest.yaml
+        /extensions-validator validate --rootfs=/extensions-validator-rootfs --pkg-name="${PKG_NAME}"
+finalize:
+  - from: /rootfs
+    to: /rootfs
+  - from: /pkg/manifest.yaml
+    to: /

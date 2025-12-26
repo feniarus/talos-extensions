@@ -1,0 +1,2 @@
+VERSION: "{{ .DOCA_MFT_VERSION }}-{{ .BUILD_ARG_TAG }}"
+TIER: "contrib"

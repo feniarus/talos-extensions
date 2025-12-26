@@ -1,0 +1,11 @@
+version: v1alpha1
+metadata:
+  name: nvidia-doca-ofed
+  version: "{{ .VERSION }}"
+  author: Sidero Labs
+  description: |
+    [{{ .TIER }}] This system extension provides MLNX_OFED drivers for NVIDIA BlueField DPUs and ConnectX NICs.
+    This is the minimal driver-only installation equivalent to MLNX_OFED, without additional DOCA functionality.
+  compatibility:
+    talos:
+      version: ">= v1.0.0"
